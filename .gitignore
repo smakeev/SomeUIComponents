@@ -1,0 +1,42 @@
+# === General ===
+.DS_Store
+*.swp
+*.lock
+*.log
+*.tmp
+
+# === SwiftPM artifacts ===
+.build/
+.swiftpm/xcode/
+
+# === Xcode ===
+*.xcworkspace
+*.xcuserstate
+*.xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData/
+.idea/
+*.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+
+# === Xcode Preview & SwiftUI canvas ===
+*.canvas
+*.swiftpm
+*.xcscmblueprint
+
+# === Tuist ===
+Tuist/Generated/
+Tuist/Dependencies/
+
+# === Example project ===
+Example/DerivedData/
+Example/.build/
+Example/.swiftpm/
+Example/xcuserdata/
+Example/*.xcworkspace
+Example/*.xcuserstate
+Example/*.xcuserdata
+
+# === Misc ===
+Package.resolved
+Example/Package.resolved
