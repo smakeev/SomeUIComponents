@@ -61,7 +61,7 @@ public enum SomeRadioTextPosition: SomeUIComponent {
     func resolved(_ direction: LayoutDirection) -> SomeRadioTextPosition {
         switch self {
         case .automatic:
-            return direction == .leftToRight ? .right : .left
+            return direction == .leftToRight ? .left : .right
         default:
             return self
         }
@@ -93,7 +93,7 @@ public struct SomeRadioButton: View, SomeUIComponent {
         self.textPosition = textPosition
         self.onChange = onChange
         _internalToggleClosure = {
-            isSelected.wrappedValue = false
+            isSelected.wrappedValue.toggle()
         }
     }
 

@@ -13,7 +13,8 @@ struct RadioGroupExampler: View {
 
     var body: some View {
         SomeRadioGroup(
-            selectionStyle: .multiple(max: 3),
+            selectionStyle: .multiple(max: 1),
+            minSelectCount: 1,
             titleView: Text("Radio Group"),
             buttonStyleOverride: SomeRadioSymbolStyle(color: .black, type: .checkmark),
             buttons: selections.indices.map { i in

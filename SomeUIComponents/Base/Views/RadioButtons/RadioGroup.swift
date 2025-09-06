@@ -57,11 +57,13 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
     public let buttonStyleOverride: SomeRadioSymbolStyle?
     public let buttons: [SomeRadioButton]
     public let onChange: (([Int]) -> Void)?
+    public let minSelectCount: Int
 
     @StateObject private var state = State()
 
     public init(
         selectionStyle: SomeRadioGroupSelectionStyle = .single,
+        minSelectCount: Int = 0,
         borderColor: Color = .gray,
         borderWidth: CGFloat = 1,
         borderShape: BorderShape = Rectangle(),
@@ -72,6 +74,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         onChange: (([Int]) -> Void)? = nil
     ) {
         self.selectionStyle = selectionStyle
+        self.minSelectCount = minSelectCount
         self.borderColor = borderColor
         self.borderWidth = borderWidth
         self.borderShape = borderShape
@@ -89,7 +92,19 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         state.selectionQueue = initialQueue
         _state = StateObject(wrappedValue: state)
         print("!!!! init \(state.selectionQueue), \(state.selectionStack)")
+    }
 
+    fileprivate func adjustSelectedCount() {
+        var selectedCount = state.selectionQueue.count
+        if selectedCount < minSelectCount {
+            for (index, isSelected) in state.selectionStack.enumerated() {
+                guard selectedCount < minSelectCount else { break }
+                if !isSelected {
+                    buttons[index]._internalToggleClosure?()
+                    selectedCount += 1
+                }
+            }
+        }
     }
 
     public var body: some View {
@@ -125,6 +140,13 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
             }
         }
         .frame(minHeight: 80)
+        .onAppear() {
+            if let max = selectionStyle.maxCount, minSelectCount > max ||
+                minSelectCount > buttons.count {
+                fatalError("Radio Group inconsistency: \(max)/\(minSelectCount)/\(buttons.count)")
+            }
+            adjustSelectedCount()
+        }
     }
 
     private var titleFrameAlignment: Alignment {
@@ -179,9 +201,13 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
             state.selectionStack[index] = false
             state.selectionQueue.removeAll { $0 == index }
         }
-        
+
         print("!!!! update \(state.selectionQueue), \(state.selectionStack)")
-        onChange?(state.selectionQueue)
+        if isSelected == false, minSelectCount > state.selectionQueue.count {
+            buttons[index]._internalToggleClosure?()
+        } else {
+            onChange?(state.selectionQueue)
+        }
     }
 }
 

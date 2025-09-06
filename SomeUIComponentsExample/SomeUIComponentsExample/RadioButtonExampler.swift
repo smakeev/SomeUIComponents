@@ -17,8 +17,8 @@ struct RadioButtonExampler: View {
             SomeRadioButton(text: "Left, system", isSelected: $isSelected, style:  SomeRadioSymbolStyle(color: .blue, type: SomeRadioSymbolStyleType.system), textPosition: .left) { _ in
                 print("DefaultPressed")
             }
-            SomeRadioButton(text: "Left, filled", isSelected: $isSelected, style:  SomeRadioSymbolStyle(color: .green, type: SomeRadioSymbolStyleType.dotted), textPosition: .left)
-            SomeRadioButton(text: "Left, filled", isSelected: $isSelected, style:  SomeRadioSymbolStyle(color: .black, type: SomeRadioSymbolStyleType.checkmark), textPosition: .left)
+            SomeRadioButton(text: "Left, filled", isSelected: $isSelected, style:  SomeRadioSymbolStyle(color: .green, type: SomeRadioSymbolStyleType.dotted), textPosition: .automatic)
+            SomeRadioButton(text: "Left, filled", isSelected: $isSelected, style:  SomeRadioSymbolStyle(color: .black, type: SomeRadioSymbolStyleType.checkmark), textPosition: .right)
             
         }
     }
