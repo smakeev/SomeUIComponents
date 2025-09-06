@@ -18,6 +18,10 @@ public class SomeTrickHandler: SomeUIComponent {
         }
         tricks = []
     }
+
+    deinit {
+        release()
+    }
 }
 
 public protocol SomeTrickHandlerUser {

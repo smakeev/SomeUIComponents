@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FBCDFB062E6AF3C700EE24BA /* SomeUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = FBCDFB052E6AF3C700EE24BA /* SomeUIComponents */; };
 		FBED864B2CD4AD3A001FA255 /* SomeUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = FBED864A2CD4AD3A001FA255 /* SomeUIComponents */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FBCDFB062E6AF3C700EE24BA /* SomeUIComponents in Frameworks */,
 				FBED864B2CD4AD3A001FA255 /* SomeUIComponents in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,6 +73,7 @@
 			name = SomeUIComponentsExample;
 			packageProductDependencies = (
 				FBED864A2CD4AD3A001FA255 /* SomeUIComponents */,
+				FBCDFB052E6AF3C700EE24BA /* SomeUIComponents */,
 			);
 			productName = SomeUIComponentsExample;
 			productReference = FBED86382CD4AC3D001FA255 /* SomeUIComponentsExample.app */;
@@ -91,7 +94,7 @@
 					};
 				};
 			};
-			buildConfigurationList = FBED86332CD4AC3D001FA255 /* Build configuration list for PBXProject "SomeUIComponentsExample" */;
+			buildConfigurationList = FBED86332CD4AC3D001FA255 /* Build configuration list for PBXProject "SomeUIComponentsDemo" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -101,7 +104,7 @@
 			mainGroup = FBED862F2CD4AC3D001FA255;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				FBED86492CD4AD3A001FA255 /* XCLocalSwiftPackageReference "../SomeUIComponents" */,
+				FBCDFB042E6AF3C700EE24BA /* XCLocalSwiftPackageReference "../../SomeUIComponents" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FBED86392CD4AC3D001FA255 /* Products */;
@@ -316,7 +319,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		FBED86332CD4AC3D001FA255 /* Build configuration list for PBXProject "SomeUIComponentsExample" */ = {
+		FBED86332CD4AC3D001FA255 /* Build configuration list for PBXProject "SomeUIComponentsDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FBED86442CD4AC3F001FA255 /* Debug */,
@@ -337,13 +340,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		FBED86492CD4AD3A001FA255 /* XCLocalSwiftPackageReference "../SomeUIComponents" */ = {
+		FBCDFB042E6AF3C700EE24BA /* XCLocalSwiftPackageReference "../../SomeUIComponents" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../SomeUIComponents;
+			relativePath = ../../SomeUIComponents;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		FBCDFB052E6AF3C700EE24BA /* SomeUIComponents */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SomeUIComponents;
+		};
 		FBED864A2CD4AD3A001FA255 /* SomeUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SomeUIComponents;

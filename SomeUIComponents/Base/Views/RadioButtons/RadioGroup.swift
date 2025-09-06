@@ -1,0 +1,198 @@
+//
+//  RadioGroup.swift
+//  SomeUIComponents
+//
+//  Created by Sergey Makeev on 06.09.2025.
+//
+
+import SwiftUI
+
+// MARK: - Selection Style
+
+public enum SomeRadioGroupSelectionStyle: SomeUIComponent {
+    case single
+    case multiple(max: Int)
+    case all
+
+    public var maxCount: Int? {
+        switch self {
+        case .single: return 1
+        case .multiple(let max): return max
+        case .all: return nil
+        }
+    }
+}
+
+// MARK: - Title Alignment
+
+public enum SomeRadioGroupTitleAlignment: SomeUIComponent {
+    case leading
+    case center
+    case trailing
+    case automatic
+
+    public static func defaultForLayoutDirection(_ layoutDirection: LayoutDirection) -> Self {
+        switch layoutDirection {
+        case .leftToRight: return .leading
+        case .rightToLeft: return .trailing
+        @unknown default: return .leading
+        }
+    }
+}
+
+// MARK: - SomeRadioGroup
+
+private final class State: ObservableObject {
+    @Published var selectionStack: [Bool] = []
+    @Published var selectionQueue: [Int] = []
+}
+
+public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
+    public let selectionStyle: SomeRadioGroupSelectionStyle
+    public let borderColor: Color
+    public let borderWidth: CGFloat
+    public let borderShape: BorderShape
+    public let titleView: AnyView
+    public let titleAlignment: SomeRadioGroupTitleAlignment
+    public let buttonStyleOverride: SomeRadioSymbolStyle?
+    public let buttons: [SomeRadioButton]
+    public let onChange: (([Int]) -> Void)?
+
+    @StateObject private var state = State()
+
+    public init(
+        selectionStyle: SomeRadioGroupSelectionStyle = .single,
+        borderColor: Color = .gray,
+        borderWidth: CGFloat = 1,
+        borderShape: BorderShape = Rectangle(),
+        titleView: some View,
+        titleAlignment: SomeRadioGroupTitleAlignment = .automatic,
+        buttonStyleOverride: SomeRadioSymbolStyle? = nil,
+        buttons: [SomeRadioButton],
+        onChange: (([Int]) -> Void)? = nil
+    ) {
+        self.selectionStyle = selectionStyle
+        self.borderColor = borderColor
+        self.borderWidth = borderWidth
+        self.borderShape = borderShape
+        self.titleView = AnyView(titleView)
+        self.titleAlignment = titleAlignment
+        self.buttonStyleOverride = buttonStyleOverride
+        self.buttons = buttons
+        self.onChange = onChange
+
+        let initialStack = buttons.map { $0.isSelected }
+        let initialQueue = initialStack.enumerated()
+               .compactMap { $0.element ? $0.offset : nil }
+        let state = State()
+        state.selectionStack = initialStack
+        state.selectionQueue = initialQueue
+        _state = StateObject(wrappedValue: state)
+        print("!!!! init \(state.selectionQueue), \(state.selectionStack)")
+
+    }
+
+    public var body: some View {
+        let zippedButtons = Array(buttons.enumerated())
+
+        return GeometryReader { proxy in
+            ZStack(alignment: .topLeading) {
+                borderShape
+                    .stroke(borderColor, lineWidth: borderWidth)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Spacer(minLength: 12)
+
+                    ForEach(zippedButtons, id: \.offset) { index, button in
+                        button
+                            .withOverriddenStyle(buttonStyleOverride)
+                            .internalSelectionObserver { newValue in
+                                updateSelection(index: index, isSelected: newValue)
+                            }
+                    }
+
+                    Spacer(minLength: 12)
+                }
+                .padding(.horizontal, 12)
+
+                titleView
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .padding(.horizontal, 6)
+                    .background(Color(UIColor.systemBackground))
+                    .frame(maxWidth: proxy.size.width - 24, alignment: titleFrameAlignment)
+                    .offset(y: -10)
+            }
+        }
+        .frame(minHeight: 80)
+    }
+
+    private var titleFrameAlignment: Alignment {
+        switch titleAlignment {
+        case .leading:
+            return .leading
+        case .center:
+            return .center
+        case .trailing:
+            return .trailing
+        case .automatic:
+            let uiDir = UIView.userInterfaceLayoutDirection(
+                for: UIView.appearance().semanticContentAttribute
+            )
+            let layoutDir: LayoutDirection = (uiDir == .rightToLeft) ? .rightToLeft : .leftToRight
+
+            let resolved = SomeRadioGroupTitleAlignment
+                .defaultForLayoutDirection(layoutDir)
+
+            switch resolved {
+            case .leading: return .leading
+            case .center: return .center
+            case .trailing: return .trailing
+            case .automatic: return .leading // fallback, though should never happen
+            }
+        }
+    }
+
+    private func updateSelection(index: Int, isSelected: Bool) {
+        guard state.selectionStack.indices.contains(index) else { return }
+        print("update: index: \(index), isSelected: \(isSelected)")
+        // Handle selection
+        if isSelected {
+            // Skip if already in the correct state
+            if state.selectionStack[index] { return }
+
+            // Apply max selection logic
+            if let max = selectionStyle.maxCount, state.selectionQueue.count == max {
+                // Remove the oldest selected index
+                if let oldest = state.selectionQueue.first {
+                    buttons[oldest]._internalToggleClosure?()
+                    state.selectionQueue.removeFirst()
+                }
+            }
+            
+            state.selectionStack[index] = true
+            if !state.selectionQueue.contains(index) {
+                state.selectionQueue.append(index)
+            }
+        } else {
+            // Handle deselection
+            state.selectionStack[index] = false
+            state.selectionQueue.removeAll { $0 == index }
+        }
+        
+        print("!!!! update \(state.selectionQueue), \(state.selectionStack)")
+        onChange?(state.selectionQueue)
+    }
+}
+
+extension SomeRadioButton {
+    /// Returns a copy of the radio button with the given style applied,
+    /// overriding the current style if the override is provided.
+    func withOverriddenStyle(_ override: SomeRadioSymbolStyle?) -> SomeRadioButton {
+        guard let override = override else { return self }
+
+        var copy = self
+        copy.style = override
+        return copy
+    }
+}

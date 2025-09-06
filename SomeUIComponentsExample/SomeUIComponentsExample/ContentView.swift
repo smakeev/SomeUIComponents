@@ -23,7 +23,8 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            PointsListExampler()
+            //PointsListExampler()
+            RadioGroupExampler()
             SomeShape(path: textPath, key: "TextPathMain")
                 .storeIn(handler: trickHandler)
                 .stroke(LinearGradient(
