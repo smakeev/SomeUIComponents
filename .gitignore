@@ -1,42 +1,54 @@
-# === General ===
+# Xcode
 .DS_Store
-*.swp
-*.lock
-*.log
-*.tmp
-
-# === SwiftPM artifacts ===
-.build/
-.swiftpm/xcode/
-
-# === Xcode ===
-*.xcworkspace
+xcuserdata/
 *.xcuserstate
-*.xcuserdata
 *.xccheckout
-*.moved-aside
-DerivedData/
-.idea/
-*.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
-
-# === Xcode Preview & SwiftUI canvas ===
-*.canvas
-*.swiftpm
 *.xcscmblueprint
+*.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/project.xcworkspace/*
+**/project.xcworkspace/
 
-# === Tuist ===
-Tuist/Generated/
-Tuist/Dependencies/
+# Build artifacts
+build/
+DerivedData/
+*.o
+*.obj
+*.pyc
+*.pyo
+*.swp
 
-# === Example project ===
-Example/DerivedData/
-Example/.build/
-Example/.swiftpm/
-Example/xcuserdata/
-Example/*.xcworkspace
-Example/*.xcuserstate
-Example/*.xcuserdata
-
-# === Misc ===
+# SwiftPM
+/.build/
 Package.resolved
-Example/Package.resolved
+**/.swiftpm/
+# Tuist
+Tuist/Dependencies/SwiftPackageManager/.build
+Tuist/Dependencies/SwiftPackageManager/Package.resolved
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/
+
+# SwiftPM Xcode integration
+.swiftpm/xcode/package.xcworkspace/
+.swiftpm/xcode/xcshareddata/
+
+# Logs
+*.log
+
+# Archives
+*.xcarchive
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Personal settings
+*.xcsettings
+*.entitlements
+*.orig
+*.orig.*
