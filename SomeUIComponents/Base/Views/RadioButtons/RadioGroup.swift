@@ -58,6 +58,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
     public let buttons: [SomeRadioButton]
     public let onChange: (([Int]) -> Void)?
     public let minSelectCount: Int
+    public var canChangeSelection: ((Int, Bool) -> Bool)?
 
     @StateObject private var state = State()
 
@@ -105,6 +106,27 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
                 }
             }
         }
+        if let max = selectionStyle.maxCount, selectedCount > max {
+            print("!!!! more than \(max) selected")
+            for (index, isSelected) in state.selectionStack.enumerated() {
+                guard selectedCount > max else { break }
+                if isSelected {
+                    buttons[index]._internalToggleClosure?()
+                    selectedCount -= 1
+                }
+            }
+        }
+    }
+
+    /// Add a callback to check if new value can be set by index
+    /// @param - 1st - index of the element
+    /// @param - 2nd - New state
+    /// @return - true = can be changed, false - can't be changed
+    public func onSelectionChangeAttempt
+(_ delegateCallback: @escaping (Int, Bool) -> Bool) -> Self {
+        var copy = self
+        copy.canChangeSelection = delegateCallback
+        return copy
     }
 
     public var body: some View {
@@ -124,8 +146,11 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
                             .internalSelectionObserver { newValue in
                                 updateSelection(index: index, isSelected: newValue)
                             }
+                            .internalToggleControlDelegate {
+                                (canChangeSelection?(index, $0) ?? true)
+                                && ($0 || state.selectionQueue.count > minSelectCount)
+                            }
                     }
-
                     Spacer(minLength: 12)
                 }
                 .padding(.horizontal, 12)

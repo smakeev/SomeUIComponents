@@ -9,17 +9,23 @@ import SwiftUI
 import SomeUIComponents
 
 struct RadioGroupExampler: View {
-    @State private var selections: [Bool] = [false, false, false, false, false, false]
+    @State private var selections: [Bool] = [true, true, true, true, true, false]
 
     var body: some View {
         SomeRadioGroup(
-            selectionStyle: .multiple(max: 1),
-            minSelectCount: 1,
+            selectionStyle: .all,//.multiple(max: 3),
+            minSelectCount: 2,
             titleView: Text("Radio Group"),
             buttonStyleOverride: SomeRadioSymbolStyle(color: .black, type: .checkmark),
             buttons: selections.indices.map { i in
                 SomeRadioButton(text: "Option \(i+1)", isSelected: $selections[i])
-            }) .padding()
+            })
+            .onSelectionChangeAttempt
+ { index, newState in
+                guard index != 5 else { return false }
+                return true
+            }
+            .padding()
     }
 }
 

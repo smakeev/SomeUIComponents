@@ -76,8 +76,9 @@ public struct SomeRadioButton: View, SomeUIComponent {
     public var textPosition: SomeRadioTextPosition
     public var onChange: ((Bool) -> Void)?
 
-    var _onSelectionChange: ((Bool) -> Void)? = nil
+    var _internalOnSelectionChange: ((Bool) -> Void)? = nil
     var _internalToggleClosure: (() -> Void)?
+    var _internalToggleDelegateClosure: ((Bool) -> Bool)? = nil
 
     public init(
         text: String,
@@ -111,18 +112,27 @@ public struct SomeRadioButton: View, SomeUIComponent {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            isSelected.toggle()
+            if _internalToggleDelegateClosure?(!isSelected) ?? true {
+                isSelected.toggle()
+            }
         }.onChange(of: isSelected) { newValue in
             print("\(text) ON CHANGE")
             onChange?(newValue)
-            _onSelectionChange?(newValue)
+            _internalOnSelectionChange?(newValue)
         }
     }
 
     /// Used by the group to set internal callback
     func internalSelectionObserver(_ callback: @escaping (Bool) -> Void) -> SomeRadioButton {
         var copy = self
-        copy._onSelectionChange = callback
+        copy._internalOnSelectionChange = callback
+        return copy
+    }
+
+    /// Used by group to control the state change
+    func internalToggleControlDelegate(_ callback: @escaping (Bool) -> Bool) -> SomeRadioButton {
+        var copy = self
+        copy._internalToggleDelegateClosure = callback
         return copy
     }
 
