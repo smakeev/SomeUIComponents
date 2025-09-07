@@ -59,6 +59,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
     public let onChange: (([Int]) -> Void)?
     public let minSelectCount: Int
     public var canChangeSelection: ((Int, Bool) -> Bool)?
+    @Environment(\.isEnabled) private var isEnabled
 
     @StateObject private var state = State()
 
@@ -150,6 +151,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
                                 (canChangeSelection?(index, $0) ?? true)
                                 && ($0 || state.selectionQueue.count > minSelectCount)
                             }
+                            .environment(\.isEnabled, isEnabled)
                     }
                     Spacer(minLength: 12)
                 }

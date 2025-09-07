@@ -14,11 +14,11 @@ struct RadioButtonExampler: View {
     var body: some View {
         VStack {
             SomeRadioButton(text: "Default, automatic", isSelected: $isSelected)
-            SomeRadioButton(text: "Left, system", isSelected: $isSelected, style:  SomeRadioSymbolStyle(color: .blue, type: SomeRadioSymbolStyleType.system), textPosition: .left) { _ in
+            SomeRadioButton(text: "Left, system", isSelected: $isSelected, style:  SomeRadioSymbolStyle(color: .blue, type: SomeRadioSymbolStyleType.fill), textPosition: .left) { _ in
                 print("DefaultPressed")
             }
             SomeRadioButton(text: "Left, filled", isSelected: $isSelected, style:  SomeRadioSymbolStyle(color: .green, type: SomeRadioSymbolStyleType.dotted), textPosition: .automatic)
-            SomeRadioButton(text: "Left, filled", isSelected: $isSelected, style:  SomeRadioSymbolStyle(color: .black, type: SomeRadioSymbolStyleType.checkmark), textPosition: .right)
+            SomeRadioButton(text: "Left, filled", isSelected: $isSelected, style:  SomeRadioSymbolStyle(color: .black, type: SomeRadioSymbolStyleType.checkmark), textPosition: .right).disabled(true)
             
         }
     }

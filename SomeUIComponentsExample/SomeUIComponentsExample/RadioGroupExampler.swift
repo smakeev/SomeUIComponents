@@ -16,16 +16,17 @@ struct RadioGroupExampler: View {
             selectionStyle: .all,//.multiple(max: 3),
             minSelectCount: 2,
             titleView: Text("Radio Group"),
-            buttonStyleOverride: SomeRadioSymbolStyle(color: .black, type: .checkmark),
+            buttonStyleOverride: SomeRadioSymbolStyle(color: .green, type: .dot),
             buttons: selections.indices.map { i in
-                SomeRadioButton(text: "Option \(i+1)", isSelected: $selections[i])
+                SomeRadioButton(text: "Option \(i+1)", isSelected: $selections[i], isDisabled: i == 2 ? .constant(true) : .constant(false))
             })
-            .onSelectionChangeAttempt
- { index, newState in
+            .onSelectionChangeAttempt { index, newState in
+                print("!!! Check for change availability")
                 guard index != 5 else { return false }
                 return true
             }
             .padding()
+            .disabled(false)
     }
 }
 

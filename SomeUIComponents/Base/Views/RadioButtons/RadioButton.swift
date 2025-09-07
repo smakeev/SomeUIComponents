@@ -14,7 +14,7 @@ public struct SomeRadioSymbolStyle: SomeUIComponent {
     public let color: Color
     public let styleType: SomeRadioSymbolStyleType
 
-    public init(color: Color = .gray, type: SomeRadioSymbolStyleType = .system) {
+    public init(color: Color = .gray, type: SomeRadioSymbolStyleType = .minimal) {
         self.color = color
         self.styleType = type
         let symbols = styleType.style()
@@ -25,28 +25,41 @@ public struct SomeRadioSymbolStyle: SomeUIComponent {
     @ViewBuilder
     public func view(isSelected: Bool) -> some View {
         Image(systemName: isSelected ? onSymbol : offSymbol)
+            .symbolEffect(.bounce, value: isSelected)
             .foregroundColor(color)
     }
 }
 
 /// Preset symbol styles using SF Symbols.
 public enum SomeRadioSymbolStyleType: SomeUIComponent {
-    case system
+    case fill
     case minimal
     case dotted
     case checkmark
+    case dot
+    case smallDot
+    case square
+    case target
     case custom(String, String)
 
     public func style(with color: Color = .gray) -> (onSymbol: String, offSymbol: String) {
         switch self {
-        case .system:
-            return (onSymbol: "record.circle.fill", offSymbol: "circle.fill")
-        case .minimal:
+        case .fill:
             return (onSymbol: "circle.fill", offSymbol: "circle")
+        case .minimal:
+            return (onSymbol: "inset.filled.circle", offSymbol: "circle")
         case .dotted:
             return (onSymbol: "circle.dotted.circle.fill", offSymbol: "circle.fill")
         case .checkmark:
             return (onSymbol: "checkmark.circle.fill", offSymbol: "circle")
+        case .dot:
+            return (onSymbol: "record.circle", offSymbol: "circle")
+        case .smallDot:
+            return (onSymbol: "smallcircle.filled.circle", offSymbol: "circle")
+        case .square:
+            return (onSymbol: "stop.circle", offSymbol: "circle")
+        case .target:
+            return (onSymbol: "target", offSymbol: "circle")
         case .custom(let onSymbol, let offSymbol):
             return (onSymbol: onSymbol, offSymbol: offSymbol)
         }
@@ -71,6 +84,7 @@ public enum SomeRadioTextPosition: SomeUIComponent {
 public struct SomeRadioButton: View, SomeUIComponent {
     public let text: String
     @Binding public var isSelected: Bool
+    @Binding public var isDisabled: Bool
     let selectionBinding: Binding<Bool>
     public var style: SomeRadioSymbolStyle
     public var textPosition: SomeRadioTextPosition
@@ -83,12 +97,14 @@ public struct SomeRadioButton: View, SomeUIComponent {
     public init(
         text: String,
         isSelected: Binding<Bool>,
+        isDisabled: Binding<Bool> = .constant(false),
         style: SomeRadioSymbolStyle = SomeRadioSymbolStyle(),
         textPosition: SomeRadioTextPosition = .automatic,
         onChange: ((Bool) -> Void)? = nil
     ) {
         self.text = text
         self._isSelected = isSelected
+        self._isDisabled = isDisabled
         self.selectionBinding = isSelected
         self.style = style
         self.textPosition = textPosition
@@ -112,6 +128,7 @@ public struct SomeRadioButton: View, SomeUIComponent {
         }
         .contentShape(Rectangle())
         .onTapGesture {
+            guard isEnabled, !isDisabled else { return }
             if _internalToggleDelegateClosure?(!isSelected) ?? true {
                 isSelected.toggle()
             }
@@ -120,7 +137,13 @@ public struct SomeRadioButton: View, SomeUIComponent {
             onChange?(newValue)
             _internalOnSelectionChange?(newValue)
         }
+        .overlay {
+            if !isEnabled || isDisabled {
+                Color.white.opacity(0.6)
+            }
+        }
     }
+
 
     /// Used by the group to set internal callback
     func internalSelectionObserver(_ callback: @escaping (Bool) -> Void) -> SomeRadioButton {
@@ -137,4 +160,5 @@ public struct SomeRadioButton: View, SomeUIComponent {
     }
 
     @Environment(\.layoutDirection) private var layoutDirection
+    @Environment(\.isEnabled) private var isEnabled
 }
