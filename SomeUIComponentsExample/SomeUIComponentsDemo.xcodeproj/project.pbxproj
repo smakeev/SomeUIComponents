@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		FBCDFB062E6AF3C700EE24BA /* SomeUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = FBCDFB052E6AF3C700EE24BA /* SomeUIComponents */; };
 		FBED864B2CD4AD3A001FA255 /* SomeUIComponents in Frameworks */ = {isa = PBXBuildFile; productRef = FBED864A2CD4AD3A001FA255 /* SomeUIComponents */; };
+		FBFFCDE92E72B92200E7683E /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = FBFFCDE82E72B92200E7683E /* Logging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FBFFCDE92E72B92200E7683E /* Logging in Frameworks */,
 				FBCDFB062E6AF3C700EE24BA /* SomeUIComponents in Frameworks */,
 				FBED864B2CD4AD3A001FA255 /* SomeUIComponents in Frameworks */,
 			);
@@ -74,6 +76,7 @@
 			packageProductDependencies = (
 				FBED864A2CD4AD3A001FA255 /* SomeUIComponents */,
 				FBCDFB052E6AF3C700EE24BA /* SomeUIComponents */,
+				FBFFCDE82E72B92200E7683E /* Logging */,
 			);
 			productName = SomeUIComponentsExample;
 			productReference = FBED86382CD4AC3D001FA255 /* SomeUIComponentsExample.app */;
@@ -105,6 +108,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				FBCDFB042E6AF3C700EE24BA /* XCLocalSwiftPackageReference "../../SomeUIComponents" */,
+				FBFFCDE72E72B92200E7683E /* XCRemoteSwiftPackageReference "swift-log" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FBED86392CD4AC3D001FA255 /* Products */;
@@ -346,6 +350,17 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		FBFFCDE72E72B92200E7683E /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		FBCDFB052E6AF3C700EE24BA /* SomeUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -354,6 +369,11 @@
 		FBED864A2CD4AD3A001FA255 /* SomeUIComponents */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SomeUIComponents;
+		};
+		FBFFCDE82E72B92200E7683E /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FBFFCDE72E72B92200E7683E /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

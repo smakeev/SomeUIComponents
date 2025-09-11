@@ -93,7 +93,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         state.selectionStack = initialStack
         state.selectionQueue = initialQueue
         _state = StateObject(wrappedValue: state)
-        Log.debug("Init selectionQueue: \(state.selectionQueue), selectionStack: \(state.selectionStack)")
+        logger.debug("Init selectionQueue: \(state.selectionQueue), selectionStack: \(state.selectionStack)")
     }
 
     fileprivate func adjustSelectedCount() {
@@ -108,7 +108,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
             }
         }
         if let max = selectionStyle.maxCount, selectedCount > max {
-            Log.debug("RadioGroup more than MAX: \(max) selected")
+            logger.debug("RadioGroup more than MAX: \(max) selected")
             for (index, isSelected) in state.selectionStack.enumerated() {
                 guard selectedCount > max else { break }
                 if isSelected {
@@ -170,7 +170,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         .onAppear() {
             if let max = selectionStyle.maxCount, minSelectCount > max ||
                 minSelectCount > buttons.count {
-                Log.fault("Radio Group inconsistency: max: \(String(describing: max)), min: \(minSelectCount), buttons.count: \(buttons.count)")
+                logger.critical("Radio Group inconsistency: max: \(String(describing: max)), min: \(minSelectCount), buttons.count: \(buttons.count)")
                 fatalError("Radio Group inconsistency: \(max)/\(minSelectCount)/\(buttons.count)")
             }
             adjustSelectedCount()
@@ -205,7 +205,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
 
     private func updateSelection(index: Int, isSelected: Bool) {
         guard state.selectionStack.indices.contains(index) else { return }
-        Log.debug("Update selection — index: \(index), isSelected: \(isSelected)")
+        logger.debug("Update selection — index: \(index), isSelected: \(isSelected)")
         // Handle selection
         if isSelected {
             // Skip if already in the correct state
@@ -230,7 +230,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
             state.selectionQueue.removeAll { $0 == index }
         }
 
-        Log.debug("Update state — queue: \(state.selectionQueue), stack: \(state.selectionStack)")
+        logger.debug("Update state — queue: \(state.selectionQueue), stack: \(state.selectionStack)")
         if isSelected == false, minSelectCount > state.selectionQueue.count {
             buttons[index]._internalToggleClosure?()
         } else {

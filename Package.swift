@@ -13,11 +13,19 @@ let package = Package(
             name: "SomeUIComponents",
             targets: ["SomeUIComponents"]),
     ],
+    dependencies: [
+        // SwiftLog API
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.0")
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "SomeUIComponents", path: "SomeUIComponents"),
+            name: "SomeUIComponents",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log")
+            ],
+            path: "SomeUIComponents"),
         .testTarget(
             name: "SomeUIComponentsTests",
             dependencies: ["SomeUIComponents"]

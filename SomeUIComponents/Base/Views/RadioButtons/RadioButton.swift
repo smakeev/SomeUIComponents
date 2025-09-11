@@ -133,7 +133,7 @@ public struct SomeRadioButton: View, SomeUIComponent {
                 isSelected.toggle()
             }
         }.onChange(of: isSelected) { newValue in
-            Log.debug("Radio button: \(text) ON CHANGE to value: \(newValue)")
+            logger.debug("Radio button: \(text) ON CHANGE to value: \(newValue)")
             onChange?(newValue)
             _internalOnSelectionChange?(newValue)
         }

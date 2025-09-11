@@ -21,7 +21,7 @@ struct RadioGroupExampler: View {
                 SomeRadioButton(text: "Option \(i+1)", isSelected: $selections[i], isDisabled: i == 2 ? .constant(true) : .constant(false))
             })
             .onSelectionChangeAttempt { index, newState in
-                print("!!! Check for change availability")
+                logger.debug("Check for change availability")
                 guard index != 5 else { return false }
                 return true
             }
