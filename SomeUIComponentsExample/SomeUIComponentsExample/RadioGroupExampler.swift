@@ -8,6 +8,32 @@
 import SwiftUI
 import SomeUIComponents
 
+struct ColoredToggleStyle: ToggleStyle {
+    var onColor: Color
+    var offColor: Color
+    var thumbColor: Color = .white
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+
+            RoundedRectangle(cornerRadius: 16)
+                .fill(configuration.isOn ? onColor : offColor)
+                .frame(width: 50, height: 30)
+                .overlay(
+                    Circle()
+                        .fill(thumbColor)
+                        .padding(3)
+                        .offset(x: configuration.isOn ? 10 : -10)
+                        .animation(.easeInOut(duration: 0.2), value: configuration.isOn)
+                )
+                .onTapGesture {
+                    configuration.isOn.toggle()
+                }
+        }
+    }
+}
+
 struct RadioGroupExampler: View {
     @State private var selections: [Bool] = [true, true, true, true, true, false]
 
@@ -16,7 +42,7 @@ struct RadioGroupExampler: View {
             selectionStyle: .all,//.multiple(max: 3),
             minSelectCount: 2,
             titleView: Text("Radio Group"),
-            buttonStyleOverride: SomeRadioSymbolStyle(color: .green, type: .dot),
+            buttonStyleOverride: SomeRadioSymbolStyle(type: .toggle(style: AnyToggleStyle(ColoredToggleStyle(onColor: .red, offColor: .gray)))),
             buttons: selections.indices.map { i in
                 SomeRadioButton(text: "Option \(i+1)", isSelected: $selections[i], isDisabled: i == 2 ? .constant(true) : .constant(false))
             })
@@ -24,6 +50,9 @@ struct RadioGroupExampler: View {
                 logger.debug("Check for change availability")
                 guard index != 5 else { return false }
                 return true
+            }
+            .onChange(of: selections) { newValue in
+                logger.debug("New selections: \(newValue)")
             }
             .padding()
             .disabled(false)

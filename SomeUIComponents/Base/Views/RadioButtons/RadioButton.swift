@@ -11,57 +11,103 @@ import SwiftUI
 public struct SomeRadioSymbolStyle: SomeUIComponent {
     public let onSymbol: String
     public let offSymbol: String
-    public let color: Color
+    public let onColor: Color
+    public let offColor: Color
     public let styleType: SomeRadioSymbolStyleType
+    public let toggleStyle: AnyToggleStyle?
 
-    public init(color: Color = .gray, type: SomeRadioSymbolStyleType = .minimal) {
-        self.color = color
+    public init(type: SomeRadioSymbolStyleType = .minimal(onColor: .green, offColor: .gray)) {
         self.styleType = type
         let symbols = styleType.style()
         self.onSymbol = symbols.onSymbol
         self.offSymbol = symbols.offSymbol
+        self.toggleStyle = symbols.toggleStyle
+        self.onColor = symbols.onColor ?? .green
+        self.offColor = symbols.offColor ?? .gray
     }
 
     @ViewBuilder
-    public func view(isSelected: Bool) -> some View {
-        Image(systemName: isSelected ? onSymbol : offSymbol)
-            .symbolEffect(.bounce, value: isSelected)
-            .foregroundColor(color)
+    @MainActor
+    public func view(isSelected: Binding<Bool>, toggleGuard: ((Bool) -> Bool)? = nil) -> AnyView {
+        guard !onSymbol.isEmpty, !offSymbol.isEmpty else {
+            let controlledBinding = Binding<Bool>(
+                        get: { isSelected.wrappedValue },
+                        set: { newValue in
+                            if toggleGuard?(newValue) ?? true {
+                                isSelected.wrappedValue = newValue
+                            }
+                        }
+                    )
+            return AnyView(Toggle("", isOn: controlledBinding)
+                .labelsHidden()
+                .toggleStyle(toggleStyle ?? .default))
+        }
+        return AnyView(Image(systemName: isSelected.wrappedValue ? onSymbol : offSymbol)
+            .symbolEffect(.bounce, value: isSelected.wrappedValue)
+            .foregroundColor( isSelected.wrappedValue ? onColor : offColor))
+    }
+}
+
+public struct AnyToggleStyle: ToggleStyle {
+    private let _makeBody: (Configuration) -> AnyView
+
+    public init<S: ToggleStyle>(_ style: S) {
+        self._makeBody = { AnyView(style.makeBody(configuration: $0)) }
+    }
+
+    public func makeBody(configuration: Configuration) -> some View {
+        _makeBody(configuration)
+    }
+
+    public static var `default`: AnyToggleStyle {
+        AnyToggleStyle(SwitchToggleStyle())
     }
 }
 
 /// Preset symbol styles using SF Symbols.
 public enum SomeRadioSymbolStyleType: SomeUIComponent {
-    case fill
-    case minimal
-    case dotted
-    case checkmark
-    case dot
-    case smallDot
-    case square
-    case target
-    case custom(String, String)
+    case fill(onColor: Color, offColor: Color)
+    case minimal(onColor: Color, offColor: Color)
+    case dotted(onColor: Color, offColor: Color)
+    case checkmark(onColor: Color, offColor: Color)
+    case dot(onColor: Color, offColor: Color)
+    case smallDot(onColor: Color, offColor: Color)
+    case square(onColor: Color, offColor: Color)
+    case target(onColor: Color, offColor: Color)
+    case xmark(onColor: Color, offColor: Color)
+    case chevron(onColor: Color, offColor: Color)
+    case custom(onSymbol: String, offSymbol: String, onColor: Color, offColor: Color)
+    case toggle(style: AnyToggleStyle)
+    static public var toggle: SomeRadioSymbolStyleType {
+        .toggle(style: MainActor.assumeIsolated { .default } )
+    }
 
-    public func style(with color: Color = .gray) -> (onSymbol: String, offSymbol: String) {
+    public func style() -> (onSymbol: String, offSymbol: String, onColor: Color?, offColor: Color?, toggleStyle: AnyToggleStyle?) {
         switch self {
-        case .fill:
-            return (onSymbol: "circle.fill", offSymbol: "circle")
-        case .minimal:
-            return (onSymbol: "inset.filled.circle", offSymbol: "circle")
-        case .dotted:
-            return (onSymbol: "circle.dotted.circle.fill", offSymbol: "circle.fill")
-        case .checkmark:
-            return (onSymbol: "checkmark.circle.fill", offSymbol: "circle")
-        case .dot:
-            return (onSymbol: "record.circle", offSymbol: "circle")
-        case .smallDot:
-            return (onSymbol: "smallcircle.filled.circle", offSymbol: "circle")
-        case .square:
-            return (onSymbol: "stop.circle", offSymbol: "circle")
-        case .target:
-            return (onSymbol: "target", offSymbol: "circle")
-        case .custom(let onSymbol, let offSymbol):
-            return (onSymbol: onSymbol, offSymbol: offSymbol)
+        case .fill(let onColor, let offColor):
+            return (onSymbol: "circle.fill", offSymbol: "circle", onColor: onColor, offColor: offColor, toggleStyle: nil)
+        case .minimal(let onColor, let offColor):
+            return (onSymbol: "inset.filled.circle", offSymbol: "circle",  onColor: onColor, offColor: offColor, toggleStyle: nil)
+        case .dotted(let onColor, let offColor):
+            return (onSymbol: "circle.dotted.circle.fill", offSymbol: "circle.fill", onColor: onColor, offColor: offColor, toggleStyle: nil)
+        case .checkmark(let onColor, let offColor):
+            return (onSymbol: "checkmark.circle.fill", offSymbol: "circle", onColor: onColor, offColor: offColor, toggleStyle: nil)
+        case .dot(let onColor, let offColor):
+            return (onSymbol: "record.circle", offSymbol: "circle", onColor: onColor, offColor: offColor, toggleStyle: nil)
+        case .smallDot(let onColor, let offColor):
+            return (onSymbol: "smallcircle.filled.circle", offSymbol: "circle", onColor: onColor, offColor: offColor, toggleStyle: nil)
+        case .square(let onColor, let offColor):
+            return (onSymbol: "stop.circle", offSymbol: "circle", onColor: onColor, offColor: offColor, toggleStyle: nil)
+        case .target(let onColor, let offColor):
+            return (onSymbol: "target", offSymbol: "circle", onColor: onColor, offColor: offColor, toggleStyle: nil)
+        case .chevron(let onColor, let offColor):
+            return (onSymbol: "chevron.compact.down", offSymbol: "chevron.compact.up", onColor: onColor, offColor: offColor, toggleStyle: nil)
+        case .xmark(let onColor, let offColor):
+            return (onSymbol: "xmark", offSymbol: "circle", onColor: onColor, offColor: offColor, toggleStyle: nil)
+        case .custom(let onSymbol, let offSymbol, let onColor, let offColor):
+            return (onSymbol: onSymbol, offSymbol: offSymbol, onColor: onColor, offColor: offColor, toggleStyle: nil)
+        case .toggle(let style):
+            return (onSymbol: "", offSymbol: "", onColor: nil, offColor: nil, toggleStyle: style)
         }
     }
 }
@@ -85,6 +131,7 @@ public struct SomeRadioButton: View, SomeUIComponent {
     public let text: String
     @Binding public var isSelected: Bool
     @Binding public var isDisabled: Bool
+
     let selectionBinding: Binding<Bool>
     public var style: SomeRadioSymbolStyle
     public var textPosition: SomeRadioTextPosition
@@ -120,9 +167,9 @@ public struct SomeRadioButton: View, SomeUIComponent {
 
             if resolved == .left {
                 Text(text)
-                style.view(isSelected: isSelected)
+                style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
             } else {
-                style.view(isSelected: isSelected)
+                style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
                 Text(text)
             }
         }
