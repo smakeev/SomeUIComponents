@@ -128,7 +128,6 @@ public enum SomeRadioTextPosition: SomeUIComponent {
 }
 
 public struct SomeRadioButton: View, SomeUIComponent {
-    public let text: String
     @Binding public var isSelected: Bool
     @Binding public var isDisabled: Bool
 
@@ -137,25 +136,27 @@ public struct SomeRadioButton: View, SomeUIComponent {
     public var textPosition: SomeRadioTextPosition
     public var onChange: ((Bool) -> Void)?
 
+    private let label: AnyView
+
     var _internalOnSelectionChange: ((Bool) -> Void)? = nil
     var _internalToggleClosure: (() -> Void)?
     var _internalToggleDelegateClosure: ((Bool) -> Bool)? = nil
 
     public init(
-        text: String,
         isSelected: Binding<Bool>,
         isDisabled: Binding<Bool> = .constant(false),
         style: SomeRadioSymbolStyle = SomeRadioSymbolStyle(),
         textPosition: SomeRadioTextPosition = .automatic,
+        label: AnyView,
         onChange: ((Bool) -> Void)? = nil
     ) {
-        self.text = text
         self._isSelected = isSelected
         self._isDisabled = isDisabled
         self.selectionBinding = isSelected
         self.style = style
         self.textPosition = textPosition
         self.onChange = onChange
+        self.label = label
         _internalToggleClosure = {
             isSelected.wrappedValue.toggle()
         }
@@ -166,11 +167,11 @@ public struct SomeRadioButton: View, SomeUIComponent {
             let resolved = textPosition.resolved(layoutDirection)
 
             if resolved == .left {
-                Text(text)
+                label
                 style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
             } else {
                 style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
-                Text(text)
+                label
             }
         }
         .contentShape(Rectangle())
@@ -180,7 +181,7 @@ public struct SomeRadioButton: View, SomeUIComponent {
                 isSelected.toggle()
             }
         }.onChange(of: isSelected) { newValue in
-            logger.debug("Radio button: \(text) ON CHANGE to value: \(newValue)")
+            logger.debug("RadioButton ON CHANGE to value: \(newValue)")
             onChange?(newValue)
             _internalOnSelectionChange?(newValue)
         }

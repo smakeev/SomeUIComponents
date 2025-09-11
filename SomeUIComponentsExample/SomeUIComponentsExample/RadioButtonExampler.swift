@@ -13,13 +13,13 @@ struct RadioButtonExampler: View {
 
     var body: some View {
         VStack {
-            SomeRadioButton(text: "Default, automatic", isSelected: $isSelected)
-            SomeRadioButton(text: "Left, system", isSelected: $isSelected, style:  SomeRadioSymbolStyle(type: .fill(onColor: .green, offColor: .gray)), textPosition: .left) { _ in
+            SomeRadioButton(isSelected: $isSelected, label: AnyView(Text("Default style")))
+            SomeRadioButton(isSelected: $isSelected, style:  SomeRadioSymbolStyle(type: .fill(onColor: .green, offColor: .gray)), textPosition: .left,
+                            label: AnyView(Text("Left, system"))) { _ in
                 print("DefaultPressed")
             }
-            SomeRadioButton(text: "Left, filled", isSelected: $isSelected, style:  SomeRadioSymbolStyle(type: .dotted(onColor: .green, offColor: .red)), textPosition: .automatic)
-            SomeRadioButton(text: "Left, filled", isSelected: $isSelected, style:  SomeRadioSymbolStyle(type: .checkmark(onColor: .blue, offColor: .orange)), textPosition: .right).disabled(true)
-            
+            SomeRadioButton(isSelected: $isSelected, style:  SomeRadioSymbolStyle(type: .dotted(onColor: .green, offColor: .red)), textPosition: .automatic, label: AnyView(Text("Left, filled")))
+            SomeRadioButton(isSelected: $isSelected, style:  SomeRadioSymbolStyle(type: .checkmark(onColor: .blue, offColor: .orange)), textPosition: .right, label: AnyView(Text("Left, filled"))).disabled(true)
         }
     }
 }

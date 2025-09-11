@@ -44,7 +44,7 @@ struct RadioGroupExampler: View {
             titleView: Text("Radio Group"),
             buttonStyleOverride: SomeRadioSymbolStyle(type: .toggle(style: AnyToggleStyle(ColoredToggleStyle(onColor: .red, offColor: .gray)))),
             buttons: selections.indices.map { i in
-                SomeRadioButton(text: "Option \(i+1)", isSelected: $selections[i], isDisabled: i == 2 ? .constant(true) : .constant(false))
+                SomeRadioButton(isSelected: $selections[i], isDisabled: i == 2 ? .constant(true) : .constant(false), label: AnyView(Text("Option \(i+1)")))
             })
             .onSelectionChangeAttempt { index, newState in
                 logger.debug("Check for change availability")
