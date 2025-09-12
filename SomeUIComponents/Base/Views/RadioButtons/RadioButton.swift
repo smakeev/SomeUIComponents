@@ -135,6 +135,8 @@ public struct SomeRadioButton: View, SomeUIComponent {
     public var style: SomeRadioSymbolStyle
     public var textPosition: SomeRadioTextPosition
     public var onChange: ((Bool) -> Void)?
+    public var spacing: CGFloat?
+    public var spacer: Bool
 
     private let label: AnyView
 
@@ -147,6 +149,8 @@ public struct SomeRadioButton: View, SomeUIComponent {
         isDisabled: Binding<Bool> = .constant(false),
         style: SomeRadioSymbolStyle = SomeRadioSymbolStyle(),
         textPosition: SomeRadioTextPosition = .automatic,
+        spacer: Bool = false,
+        spacing: CGFloat? = nil,
         label: AnyView,
         onChange: ((Bool) -> Void)? = nil
     ) {
@@ -157,20 +161,24 @@ public struct SomeRadioButton: View, SomeUIComponent {
         self.textPosition = textPosition
         self.onChange = onChange
         self.label = label
+        self.spacing = spacing
+        self.spacer = spacer
         _internalToggleClosure = {
             isSelected.wrappedValue.toggle()
         }
     }
 
     public var body: some View {
-        HStack {
+        HStack(spacing: spacing) {
             let resolved = textPosition.resolved(layoutDirection)
 
             if resolved == .left {
                 label
+                if spacer { Spacer(minLength: 0) } else { EmptyView() }
                 style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
             } else {
                 style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
+                if spacer { Spacer(minLength: 0) } else { EmptyView() }
                 label
             }
         }
