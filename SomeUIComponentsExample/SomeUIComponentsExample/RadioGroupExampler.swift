@@ -35,24 +35,23 @@ struct ColoredToggleStyle: ToggleStyle {
 }
 
 struct RadioGroupExampler: View {
-    @State private var selections: [Bool] = [true, true, true, true, true, false]
+    @State private var selections: [Bool] = [true, true, true, true, true, true]
 
     var body: some View {
         SomeRadioGroup(
-            selectionStyle: .all,//.multiple(max: 3),
+            selectionStyle: .multiple(max: 3),
             minSelectCount: 2,
             titleView: Text("Radio Group"),
             buttonStyleOverride: SomeRadioSymbolStyle(type: .toggle(style: AnyToggleStyle(ColoredToggleStyle(onColor: .red, offColor: .gray)))),
             buttons: selections.indices.map { i in
-                SomeRadioButton(isSelected: $selections[i], isDisabled: i == 2 ? .constant(true) : .constant(false), label: AnyView(Text("Option \(i+1)")))
-            })
+                SomeRadioButton(isSelected: $selections[i], isDisabled: i == 1 ? .constant(true) : .constant(false), label: AnyView(Text("Option \(i+1)")))
+            }) { newValue in
+                logger.debug("New selections: \(newValue)")
+            }
             .onSelectionChangeAttempt { index, newState in
                 logger.debug("Check for change availability")
                 guard index != 5 else { return false }
                 return true
-            }
-            .onChange(of: selections) { newValue in
-                logger.debug("New selections: \(newValue)")
             }
             .padding()
             .disabled(false)

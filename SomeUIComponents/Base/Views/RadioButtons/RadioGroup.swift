@@ -43,8 +43,9 @@ public enum SomeRadioGroupTitleAlignment: SomeUIComponent {
 // MARK: - SomeRadioGroup
 
 private final class State: ObservableObject {
-    @Published var selectionStack: [Bool] = []
-    @Published var selectionQueue: [Int] = []
+    var selectionStack: [Bool] = []
+    var selectionQueue: [Int] = []
+    var lastReportedSelection: [Int] = []
 }
 
 public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
@@ -93,7 +94,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         state.selectionStack = initialStack
         state.selectionQueue = initialQueue
         _state = StateObject(wrappedValue: state)
-        logger.debug("Init selectionQueue: \(state.selectionQueue), selectionStack: \(state.selectionStack)")
+        logger.info("Init selectionQueue: \(state.selectionQueue), selectionStack: \(state.selectionStack)")
     }
 
     fileprivate func adjustSelectedCount() {
@@ -102,19 +103,25 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
             for (index, isSelected) in state.selectionStack.enumerated() {
                 guard selectedCount < minSelectCount else { break }
                 if !isSelected {
+                    guard buttons[index].isDisabled == false else { continue }
                     buttons[index]._internalToggleClosure?()
                     selectedCount += 1
                 }
             }
         }
+        guard selectedCount >= minSelectCount else { fatalError("RadioGroup minimum selection count not reached: \(minSelectCount)") }
         if let max = selectionStyle.maxCount, selectedCount > max {
-            logger.debug("RadioGroup more than MAX: \(max) selected")
+            logger.info("RadioGroup more than MAX: \(max) selected")
             for (index, isSelected) in state.selectionStack.enumerated() {
                 guard selectedCount > max else { break }
                 if isSelected {
+                    guard buttons[index].isDisabled == false else { continue }
                     buttons[index]._internalToggleClosure?()
                     selectedCount -= 1
                 }
+            }
+            guard selectedCount <= max else {
+                fatalError("RadioGroup more than MAX: \(max) selected")
             }
         }
     }
@@ -123,8 +130,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
     /// @param - 1st - index of the element
     /// @param - 2nd - New state
     /// @return - true = can be changed, false - can't be changed
-    public func onSelectionChangeAttempt
-(_ delegateCallback: @escaping (Int, Bool) -> Bool) -> Self {
+    public func onSelectionChangeAttempt(_ delegateCallback: @escaping (Int, Bool) -> Bool) -> Self {
         var copy = self
         copy.canChangeSelection = delegateCallback
         return copy
@@ -205,7 +211,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
 
     private func updateSelection(index: Int, isSelected: Bool) {
         guard state.selectionStack.indices.contains(index) else { return }
-        logger.debug("Update selection — index: \(index), isSelected: \(isSelected)")
+        logger.info("Update selection — index: \(index), isSelected: \(isSelected)")
         // Handle selection
         if isSelected {
             // Skip if already in the correct state
@@ -214,12 +220,20 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
             // Apply max selection logic
             if let max = selectionStyle.maxCount, state.selectionQueue.count == max {
                 // Remove the oldest selected index
-                if let oldest = state.selectionQueue.first {
+                if let oldest = state.selectionQueue.first(where: {
+                    buttons[$0].isDisabled == false
+                }) {
+                    logger.info("Switch off selection of \(oldest) button.")
                     buttons[oldest]._internalToggleClosure?()
-                    state.selectionQueue.removeFirst()
+                    state.selectionQueue.filter { $0 != oldest }
+                } else {
+                    // We can't switch off anything, so return the latest change back
+                    logger.info("Attempt to change selection beyond max count while deselecting of previous is imposible.")
+                    buttons[index]._internalToggleClosure?()
+                    return
                 }
             }
-            
+
             state.selectionStack[index] = true
             if !state.selectionQueue.contains(index) {
                 state.selectionQueue.append(index)
@@ -230,11 +244,14 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
             state.selectionQueue.removeAll { $0 == index }
         }
 
-        logger.debug("Update state — queue: \(state.selectionQueue), stack: \(state.selectionStack)")
+        logger.info("Update state — queue: \(state.selectionQueue), stack: \(state.selectionStack)")
         if isSelected == false, minSelectCount > state.selectionQueue.count {
             buttons[index]._internalToggleClosure?()
         } else {
-            onChange?(state.selectionQueue)
+            if state.lastReportedSelection != state.selectionQueue {
+                onChange?(state.selectionQueue)
+                state.lastReportedSelection = state.selectionQueue
+            }
         }
     }
 }
