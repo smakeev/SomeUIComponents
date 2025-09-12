@@ -140,6 +140,9 @@ public struct SomeRadioButton: View, SomeUIComponent {
 
     private let label: AnyView
 
+    @State private var ownLabelWidth: CGFloat = 0
+    private var alignmentMaxWidth: CGFloat? = nil
+
     var _internalOnSelectionChange: ((Bool) -> Void)? = nil
     var _internalToggleClosure: (() -> Void)?
     var _internalToggleDelegateClosure: ((Bool) -> Bool)? = nil
@@ -174,8 +177,22 @@ public struct SomeRadioButton: View, SomeUIComponent {
 
             if resolved == .left {
                 label
+                    .background (
+                        GeometryReader { geometry in
+                            Color.clear
+                                .onAppear { ownLabelWidth = geometry.size.width }
+                                .onChange(of: geometry.size.width) { ownLabelWidth = $0 }
+                                .preference(key: WidthPreferenceKey.self,
+                                            value: geometry.size.width)
+                        }
+                )
                 if spacer { Spacer(minLength: 0) } else { EmptyView() }
+                let offset: CGFloat = {
+                    guard let maxWidth = alignmentMaxWidth else { return 0 }
+                    return max(0, maxWidth - ownLabelWidth)
+                }()
                 style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
+                    .padding(.leading, offset)
             } else {
                 style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
                 if spacer { Spacer(minLength: 0) } else { EmptyView() }
@@ -200,6 +217,11 @@ public struct SomeRadioButton: View, SomeUIComponent {
         }
     }
 
+    func internalAlignmentSetter(_ offset: CGFloat?) -> SomeRadioButton {
+        var copy = self
+        copy.alignmentMaxWidth = offset
+        return copy
+    }
 
     /// Used by the group to set internal callback
     func internalSelectionObserver(_ callback: @escaping (Bool) -> Void) -> SomeRadioButton {
@@ -217,4 +239,11 @@ public struct SomeRadioButton: View, SomeUIComponent {
 
     @Environment(\.layoutDirection) private var layoutDirection
     @Environment(\.isEnabled) private var isEnabled
+}
+
+struct WidthPreferenceKey: PreferenceKey {
+    nonisolated(unsafe) static var defaultValue: CGFloat = 0
+    nonisolated(unsafe) static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
 }

@@ -42,7 +42,7 @@ public enum SomeRadioGroupTitleAlignment: SomeUIComponent {
 
 // MARK: - SomeRadioGroup
 
-private final class State: ObservableObject {
+private final class GroupSelectionState: ObservableObject {
     var selectionStack: [Bool] = []
     var selectionQueue: [Int] = []
     var lastReportedSelection: [Int] = []
@@ -60,9 +60,14 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
     public let onChange: (([Int]) -> Void)?
     public let minSelectCount: Int
     public var canChangeSelection: ((Int, Bool) -> Bool)?
-    @Environment(\.isEnabled) private var isEnabled
 
-    @StateObject private var state = State()
+    public var needsAlignment: Bool = false
+    @State private var maxLabelWidth: CGFloat = 0
+
+    @Environment(\.isEnabled) private var isEnabled
+    
+
+    @StateObject private var state = GroupSelectionState()
 
     public init(
         selectionStyle: SomeRadioGroupSelectionStyle = .single,
@@ -72,6 +77,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         borderShape: BorderShape = Rectangle(),
         titleView: some View,
         titleAlignment: SomeRadioGroupTitleAlignment = .automatic,
+        needsAlignment: Bool = false,
         buttonStyleOverride: SomeRadioSymbolStyle? = nil,
         buttons: [SomeRadioButton],
         onChange: (([Int]) -> Void)? = nil
@@ -86,11 +92,12 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         self.buttonStyleOverride = buttonStyleOverride
         self.buttons = buttons
         self.onChange = onChange
+        self.needsAlignment = needsAlignment
 
         let initialStack = buttons.map { $0.isSelected }
         let initialQueue = initialStack.enumerated()
                .compactMap { $0.element ? $0.offset : nil }
-        let state = State()
+        let state = GroupSelectionState()
         state.selectionStack = initialStack
         state.selectionQueue = initialQueue
         _state = StateObject(wrappedValue: state)
@@ -157,9 +164,15 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
                                 (canChangeSelection?(index, $0) ?? true)
                                 && ($0 || state.selectionQueue.count > minSelectCount)
                             }
+                            .internalAlignmentSetter(needsAlignment ? maxLabelWidth : nil)
                             .environment(\.isEnabled, isEnabled)
                     }
                     Spacer(minLength: 12)
+                }
+                .onPreferenceChange(WidthPreferenceKey.self) { value in
+                    if needsAlignment {
+                        maxLabelWidth = value
+                    }
                 }
                 .padding(.horizontal, 12)
 

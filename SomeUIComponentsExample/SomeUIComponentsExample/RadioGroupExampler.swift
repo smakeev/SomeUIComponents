@@ -42,9 +42,10 @@ struct RadioGroupExampler: View {
             selectionStyle: .multiple(max: 3),
             minSelectCount: 2,
             titleView: Text("Radio Group"),
+            needsAlignment: true,
             buttonStyleOverride: SomeRadioSymbolStyle(type: .toggle(style: AnyToggleStyle(ColoredToggleStyle(onColor: .red, offColor: .gray)))),
             buttons: selections.indices.map { i in
-                SomeRadioButton(isSelected: $selections[i], isDisabled: i == 1 ? .constant(true) : .constant(false), spacer: false, spacing: 46, label: AnyView(Text("Option \(i+1)")))
+                SomeRadioButton(isSelected: $selections[i], isDisabled: i == 1 ? .constant(true) : .constant(false), spacer: false, spacing: 8, label: AnyView(Text("Option \(i+1) + \(Int.random(in: 0..<100000))")))
             }) { newValue in
                 logger.debug("New selections: \(newValue)")
             }
