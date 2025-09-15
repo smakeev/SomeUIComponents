@@ -42,6 +42,8 @@ struct RadioGroupExampler: View {
             selectionStyle: .multiple(max: 3),
             minSelectCount: 2,
             titleView: Text("Radio Group"),
+            spacer: true,
+            spacing: 12,
             needsAlignment: true,
             buttonStyleOverride: SomeRadioSymbolStyle(type: .toggle(style: AnyToggleStyle(ColoredToggleStyle(onColor: .red, offColor: .gray)))),
             buttons: selections.indices.map { i in

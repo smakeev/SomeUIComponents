@@ -60,8 +60,10 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
     public let onChange: (([Int]) -> Void)?
     public let minSelectCount: Int
     public var canChangeSelection: ((Int, Bool) -> Bool)?
+    public let spacer: Bool
+    public let spacing: CGFloat
 
-    public var needsAlignment: Bool = false
+    public var needsAlignment: Bool
     @State private var maxLabelWidth: CGFloat = 0
 
     @Environment(\.isEnabled) private var isEnabled
@@ -77,6 +79,8 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         borderShape: BorderShape = Rectangle(),
         titleView: some View,
         titleAlignment: SomeRadioGroupTitleAlignment = .automatic,
+        spacer: Bool = false,
+        spacing: CGFloat = 8,
         needsAlignment: Bool = false,
         buttonStyleOverride: SomeRadioSymbolStyle? = nil,
         buttons: [SomeRadioButton],
@@ -93,6 +97,8 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         self.buttons = buttons
         self.onChange = onChange
         self.needsAlignment = needsAlignment
+        self.spacer = spacer
+        self.spacing = spacing
 
         let initialStack = buttons.map { $0.isSelected }
         let initialQueue = initialStack.enumerated()
@@ -143,6 +149,15 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         return copy
     }
 
+    @ViewBuilder
+    private var spacerIfNeeded: some View {
+        if spacer {
+            Spacer(minLength: 12)
+        } else {
+            EmptyView()
+        }
+    }
+
     public var body: some View {
         let zippedButtons = Array(buttons.enumerated())
 
@@ -151,8 +166,8 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
                 borderShape
                     .stroke(borderColor, lineWidth: borderWidth)
 
-                VStack(alignment: .leading, spacing: 8) {
-                    Spacer(minLength: 12)
+                VStack(alignment: .leading, spacing: spacing) {
+                    spacerIfNeeded
 
                     ForEach(zippedButtons, id: \.offset) { index, button in
                         button
@@ -166,9 +181,11 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
                             }
                             .internalAlignmentSetter(needsAlignment ? maxLabelWidth : nil)
                             .environment(\.isEnabled, isEnabled)
+                        spacerIfNeeded
                     }
-                    Spacer(minLength: 12)
+                    spacerIfNeeded
                 }
+                .padding()
                 .onPreferenceChange(WidthPreferenceKey.self) { value in
                     if needsAlignment {
                         maxLabelWidth = value
