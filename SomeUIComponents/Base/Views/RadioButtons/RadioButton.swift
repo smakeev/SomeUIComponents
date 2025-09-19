@@ -26,7 +26,6 @@ public struct SomeRadioSymbolStyle: SomeUIComponent {
         self.offColor = symbols.offColor ?? .gray
     }
 
-    @ViewBuilder
     @MainActor
     public func view(isSelected: Binding<Bool>, toggleGuard: ((Bool) -> Bool)? = nil) -> AnyView {
         guard !onSymbol.isEmpty, !offSymbol.isEmpty else {
@@ -172,47 +171,51 @@ public struct SomeRadioButton: View, SomeUIComponent {
     }
 
     public var body: some View {
-        HStack(spacing: spacing) {
-            let resolved = textPosition.resolved(layoutDirection)
-
-            if resolved == .left {
-                label
-                    .background (
-                        GeometryReader { geometry in
-                            Color.clear
-                                .onAppear { ownLabelWidth = geometry.size.width }
-                                .onChange(of: geometry.size.width) { ownLabelWidth = $0 }
-                                .preference(key: WidthPreferenceKey.self,
-                                            value: geometry.size.width)
-                        }
-                )
-                if spacer { Spacer(minLength: 0) } else { EmptyView() }
-                let offset: CGFloat = {
-                    guard let maxWidth = alignmentMaxWidth else { return 0 }
-                    return max(0, maxWidth - ownLabelWidth)
-                }()
-                style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
-                    .padding(.leading, offset)
-            } else {
-                style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
-                if spacer { Spacer(minLength: 0) } else { EmptyView() }
-                label
+        ZStack {
+            HStack(spacing: spacing) {
+                let resolved = textPosition.resolved(layoutDirection)
+                
+                if resolved == .left {
+                    label
+                        .background (
+                            GeometryReader { geometry in
+                                Color.clear
+                                    .onAppear { ownLabelWidth = geometry.size.width }
+                                    .onChange(of: geometry.size.width) { _, labelWidth in
+                                        ownLabelWidth = labelWidth
+                                    }
+                                    .preference(key: WidthPreferenceKey.self,
+                                                value: geometry.size.width)
+                            }
+                        )
+                    if spacer { Spacer(minLength: 0) } else { EmptyView() }
+                    let offset: CGFloat = {
+                        guard let maxWidth = alignmentMaxWidth else { return 0 }
+                        return max(0, maxWidth - ownLabelWidth)
+                    }()
+                    style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
+                        .padding(.leading, offset)
+                } else {
+                    style.view(isSelected: $isSelected, toggleGuard: _internalToggleDelegateClosure)
+                    if spacer { Spacer(minLength: 0) } else { EmptyView() }
+                    label
+                }
             }
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
+            .contentShape(Rectangle())
+            .onChange(of: isSelected) { _, newValue in
+                logger.debug("RadioButton ON CHANGE to value: \(newValue)")
+                onChange?(newValue)
+                _internalOnSelectionChange?(newValue)
+            }
+            .overlay {
+                if !isEnabled || isDisabled {
+                    Color.white.opacity(0.6)
+                }
+            }
+        }.onTapGesture {
             guard isEnabled, !isDisabled else { return }
             if _internalToggleDelegateClosure?(!isSelected) ?? true {
                 isSelected.toggle()
-            }
-        }.onChange(of: isSelected) { newValue in
-            logger.debug("RadioButton ON CHANGE to value: \(newValue)")
-            onChange?(newValue)
-            _internalOnSelectionChange?(newValue)
-        }
-        .overlay {
-            if !isEnabled || isDisabled {
-                Color.white.opacity(0.6)
             }
         }
     }
@@ -243,7 +246,7 @@ public struct SomeRadioButton: View, SomeUIComponent {
 
 struct WidthPreferenceKey: PreferenceKey {
     nonisolated(unsafe) static var defaultValue: CGFloat = 0
-    nonisolated(unsafe) static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+    nonisolated static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = max(value, nextValue())
     }
 }

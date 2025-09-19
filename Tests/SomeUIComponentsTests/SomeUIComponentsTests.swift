@@ -1,6 +1,13 @@
 import Testing
 @testable import SomeUIComponents
+import SwiftUI
 
-@Test func example() async throws {
-    // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+@MainActor
+final class TestBindable<Value>: ObservableObject {
+    @Published var value: Value
+    init(_ initial: Value) { value = initial }
+
+    var binding: Binding<Value> {
+        Binding(get: { self.value }, set: { self.value = $0 })
+    }
 }

@@ -15,7 +15,8 @@ let package = Package(
     ],
     dependencies: [
         // SwiftLog API
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.0")
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.0"),
+        .package(url: "https://github.com/nalexn/ViewInspector", from: "0.10.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -28,7 +29,18 @@ let package = Package(
             path: "SomeUIComponents"),
         .testTarget(
             name: "SomeUIComponentsTests",
-            dependencies: ["SomeUIComponents"]
+            dependencies: [
+                "SomeUIComponents",
+                .product(name: "ViewInspector", package: "ViewInspector")
+            ],
+            path: "Tests/SomeUIComponentsTests",
+            exclude: [],
+            resources: [],
+            swiftSettings: [
+                .define("ENABLE_IOS_TESTING")
+            ],
+            linkerSettings: [],
+            plugins: []
         ),
     ]
 )
