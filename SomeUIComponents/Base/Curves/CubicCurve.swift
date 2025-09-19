@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 public struct SomeCubicCurve:  VectorArithmetic, Sendable, SomeUIComponent {
      var point: CGPoint

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 public struct SomeCubicCurveList : VectorArithmetic, SomeUIComponent {
        var values:[SomeCubicCurve]

@@ -60,51 +60,53 @@ struct ContentView: View {
     }
 
     var body: some View {
-        VStack {
-            //PointsListExampler()
-            RadioGroupExampler()
-            SomeShape(path: textPath, key: "TextPathMain")
-                .storeIn(handler: trickHandler)
-                .stroke(LinearGradient(
-                    gradient: Gradient(colors: [.black, .yellow]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing), lineWidth: 12)
-                .fill(LinearGradient(
-                    gradient: Gradient(colors: [.white, .green]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing))
-                .frame(width: 200, height: 200)
-                .onTapGesture {
-                             withAnimation(.easeInOut(duration: 2.0)) {
-                                 self.textStateInitial.toggle()
-                                 self.textPath = Path { path in
-                                     let toUse = self.textStateInitial ? TextPathExampler.pathText1 :
-                                         TextPathExampler.pathText2
-                                     path.addPath(toUse)
-                                 }
-                             }
-                         }
-            SomeShape(path: shapePath, key: "ShapePathMain")
-                .storeIn(handler: trickHandler)
-                .stroke(LinearGradient(
-                    gradient: Gradient(colors: [.black, .yellow]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing), lineWidth: 12)
-                .fill(LinearGradient(
-                    gradient: Gradient(colors: [.white, .green]),
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing))
-                .frame(width: 200, height: 200)
-                .onTapGesture {
-                             withAnimation(.easeInOut(duration: 2.0)) {
-                                 self.shapeStateInitial.toggle()
-                                 self.shapePath = Path { path in
-                                     let toUse = self.shapeStateInitial ? TextPathExampler.path1 :
-                                         TextPathExampler.path2
-                                     path.addPath(toUse)
-                                 }
-                             }
-                         }
+        ScrollView {
+            VStack {
+                PointsListExampler()
+                RadioGroupExampler()
+                SomeShape(path: textPath, key: "TextPathMain")
+                    .storeIn(handler: trickHandler)
+                    .stroke(LinearGradient(
+                        gradient: Gradient(colors: [.black, .yellow]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing), lineWidth: 12)
+                    .fill(LinearGradient(
+                        gradient: Gradient(colors: [.white, .green]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing))
+                    .frame(width: 200, height: 100)
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 2.0)) {
+                            self.textStateInitial.toggle()
+                            self.textPath = Path { path in
+                                let toUse = self.textStateInitial ? TextPathExampler.pathText1 :
+                                TextPathExampler.pathText2
+                                path.addPath(toUse)
+                            }
+                        }
+                    }
+                SomeShape(path: shapePath, key: "ShapePathMain")
+                    .storeIn(handler: trickHandler)
+                    .stroke(LinearGradient(
+                        gradient: Gradient(colors: [.black, .yellow]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing), lineWidth: 12)
+                    .fill(LinearGradient(
+                        gradient: Gradient(colors: [.white, .green]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing))
+                    .frame(width: 200, height: 100)
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 2.0)) {
+                            self.shapeStateInitial.toggle()
+                            self.shapePath = Path { path in
+                                let toUse = self.shapeStateInitial ? TextPathExampler.path1 :
+                                TextPathExampler.path2
+                                path.addPath(toUse)
+                            }
+                        }
+                    }
+            }
         }
         .padding()
         .onDisappear() {

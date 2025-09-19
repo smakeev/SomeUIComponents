@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 public struct SomeAnimatablePointsListCurve : VectorArithmetic, SomeUIComponent {
     var values:[CGPoint]

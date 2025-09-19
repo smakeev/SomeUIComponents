@@ -1,7 +1,7 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-import SwiftUICore
+import SwiftUI
 import Logging
 
 internal protocol SomeUIComponent {}

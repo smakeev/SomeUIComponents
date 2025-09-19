@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 public struct SomeAnimatableQuadCurve : VectorArithmetic, Sendable, SomeUIComponent {
     var start: CGPoint

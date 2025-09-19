@@ -49,6 +49,42 @@ private final class GroupSelectionState: ObservableObject {
 }
 
 public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
+    public enum ContentAlignment {
+          case topLeading, topCenter, topTrailing
+          case centerLeading, center, centerTrailing
+          case bottomLeading, bottomCenter, bottomTrailing
+
+          var horizontal: HorizontalAlignment {
+              switch self {
+              case .topLeading, .centerLeading, .bottomLeading: return .leading
+              case .topCenter, .center, .bottomCenter: return .center
+              case .topTrailing, .centerTrailing, .bottomTrailing: return .trailing
+              }
+          }
+
+          var vertical: VerticalAlignment {
+              switch self {
+              case .topLeading, .topCenter, .topTrailing: return .top
+              case .centerLeading, .center, .centerTrailing: return .center
+              case .bottomLeading, .bottomCenter, .bottomTrailing: return .bottom
+              }
+          }
+
+          var swiftUIAlignment: Alignment {
+              switch self {
+              case .topLeading: return .topLeading
+              case .topCenter: return .top
+              case .topTrailing: return .topTrailing
+              case .centerLeading: return .leading
+              case .center: return .center
+              case .centerTrailing: return .trailing
+              case .bottomLeading: return .bottomLeading
+              case .bottomCenter: return .bottom
+              case .bottomTrailing: return .bottomTrailing
+              }
+          }
+      }
+    public var contentAlignment: ContentAlignment
     public let selectionStyle: SomeRadioGroupSelectionStyle
     public let borderColor: Color
     public let borderWidth: CGFloat
@@ -67,7 +103,6 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
     @State private var maxLabelWidth: CGFloat = 0
 
     @Environment(\.isEnabled) private var isEnabled
-    
 
     @StateObject private var state = GroupSelectionState()
 
@@ -79,6 +114,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         borderShape: BorderShape = Rectangle(),
         titleView: some View,
         titleAlignment: SomeRadioGroupTitleAlignment = .automatic,
+        contentAlignment: ContentAlignment = .topLeading,
         spacer: Bool = false,
         spacing: CGFloat = 8,
         needsAlignment: Bool = false,
@@ -99,7 +135,7 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
         self.needsAlignment = needsAlignment
         self.spacer = spacer
         self.spacing = spacing
-
+        self.contentAlignment = contentAlignment
         let initialStack = buttons.map { $0.isSelected }
         let initialQueue = initialStack.enumerated()
                .compactMap { $0.element ? $0.offset : nil }
@@ -150,10 +186,18 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
     }
 
     @ViewBuilder
-    private var spacerIfNeeded: some View {
+    private func spacerIfNeeded(_ place: VerticalAlignment) -> some View {
         if spacer {
             Spacer(minLength: 12)
         } else {
+            if contentAlignment.vertical == .top {
+                EmptyView()
+            } else if contentAlignment.vertical == .center &&
+                        (place == .top || place == .bottom) {
+                Spacer(minLength: 12)
+            } else if contentAlignment.vertical == .bottom && place == .top {
+                Spacer(minLength: 12)
+            }
             EmptyView()
         }
     }
@@ -161,13 +205,13 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
     public var body: some View {
         let zippedButtons = Array(buttons.enumerated())
 
-        return GeometryReader { proxy in
-            ZStack(alignment: .topLeading) {
+        return 
+        ZStack(alignment: .topLeading) {
                 borderShape
                     .stroke(borderColor, lineWidth: borderWidth)
 
-                VStack(alignment: .leading, spacing: spacing) {
-                    spacerIfNeeded
+            VStack(alignment: contentAlignment.horizontal, spacing: spacing) {
+                spacerIfNeeded(.top)
 
                     ForEach(zippedButtons, id: \.offset) { index, button in
                         button
@@ -181,10 +225,11 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
                             }
                             .internalAlignmentSetter(needsAlignment ? maxLabelWidth : nil)
                             .environment(\.isEnabled, isEnabled)
-                        spacerIfNeeded
+                        spacerIfNeeded(.center)
                     }
-                    spacerIfNeeded
+                    spacerIfNeeded(.bottom)
                 }
+                .frame(maxWidth: .infinity, alignment: contentAlignment.swiftUIAlignment)
                 .padding()
                 .onPreferenceChange(WidthPreferenceKey.self) { value in
                     if needsAlignment {
@@ -198,11 +243,9 @@ public struct SomeRadioGroup<BorderShape: Shape>: View, SomeUIComponent {
                     .truncationMode(.tail)
                     .padding(.horizontal, 6)
                     .background(Color(UIColor.systemBackground))
-                    .frame(maxWidth: proxy.size.width - 24, alignment: titleFrameAlignment)
+                    .frame(maxWidth: .infinity, alignment: titleFrameAlignment)
                     .offset(y: -10)
             }
-        }
-        .frame(minHeight: 80)
         .onAppear() {
             if let max = selectionStyle.maxCount, minSelectCount > max ||
                 minSelectCount > buttons.count {
