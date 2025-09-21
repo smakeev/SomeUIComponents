@@ -12,11 +12,27 @@
 		FBFFCDE92E72B92200E7683E /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = FBFFCDE82E72B92200E7683E /* Logging */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		FB45E8832E7DB32800E39A1B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FBED86302CD4AC3D001FA255 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FBED86372CD4AC3D001FA255;
+			remoteInfo = SomeUIComponentsExample;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		FB45E87D2E7DB32800E39A1B /* SomeUIComponentsExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SomeUIComponentsExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBED86382CD4AC3D001FA255 /* SomeUIComponentsExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SomeUIComponentsExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		FB45E87E2E7DB32800E39A1B /* SomeUIComponentsExampleUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SomeUIComponentsExampleUITests;
+			sourceTree = "<group>";
+		};
 		FBED863A2CD4AC3D001FA255 /* SomeUIComponentsExample */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = SomeUIComponentsExample;
@@ -25,6 +41,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		FB45E87A2E7DB32800E39A1B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FBED86352CD4AC3D001FA255 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -42,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				FBED863A2CD4AC3D001FA255 /* SomeUIComponentsExample */,
+				FB45E87E2E7DB32800E39A1B /* SomeUIComponentsExampleUITests */,
 				FBED86392CD4AC3D001FA255 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -50,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				FBED86382CD4AC3D001FA255 /* SomeUIComponentsExample.app */,
+				FB45E87D2E7DB32800E39A1B /* SomeUIComponentsExampleUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -57,6 +82,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		FB45E87C2E7DB32800E39A1B /* SomeUIComponentsExampleUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FB45E8872E7DB32800E39A1B /* Build configuration list for PBXNativeTarget "SomeUIComponentsExampleUITests" */;
+			buildPhases = (
+				FB45E8792E7DB32800E39A1B /* Sources */,
+				FB45E87A2E7DB32800E39A1B /* Frameworks */,
+				FB45E87B2E7DB32800E39A1B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FB45E8842E7DB32800E39A1B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				FB45E87E2E7DB32800E39A1B /* SomeUIComponentsExampleUITests */,
+			);
+			name = SomeUIComponentsExampleUITests;
+			packageProductDependencies = (
+			);
+			productName = SomeUIComponentsExampleUITests;
+			productReference = FB45E87D2E7DB32800E39A1B /* SomeUIComponentsExampleUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		FBED86372CD4AC3D001FA255 /* SomeUIComponentsExample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FBED86462CD4AC3F001FA255 /* Build configuration list for PBXNativeTarget "SomeUIComponentsExample" */;
@@ -89,9 +137,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1610;
+				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 1610;
 				TargetAttributes = {
+					FB45E87C2E7DB32800E39A1B = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = FBED86372CD4AC3D001FA255;
+					};
 					FBED86372CD4AC3D001FA255 = {
 						CreatedOnToolsVersion = 16.1;
 					};
@@ -116,11 +168,19 @@
 			projectRoot = "";
 			targets = (
 				FBED86372CD4AC3D001FA255 /* SomeUIComponentsExample */,
+				FB45E87C2E7DB32800E39A1B /* SomeUIComponentsExampleUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		FB45E87B2E7DB32800E39A1B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FBED86362CD4AC3D001FA255 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -131,6 +191,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		FB45E8792E7DB32800E39A1B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FBED86342CD4AC3D001FA255 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -140,7 +207,59 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		FB45E8842E7DB32800E39A1B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FBED86372CD4AC3D001FA255 /* SomeUIComponentsExample */;
+			targetProxy = FB45E8832E7DB32800E39A1B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		FB45E8852E7DB32800E39A1B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6WLV67D2QG;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = someprojects.SomeUIComponentsExampleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "UITESTS DEBUG";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SomeUIComponentsExample;
+			};
+			name = Debug;
+		};
+		FB45E8862E7DB32800E39A1B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6WLV67D2QG;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = someprojects.SomeUIComponentsExampleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = UITESTS;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SomeUIComponentsExample;
+			};
+			name = Release;
+		};
 		FBED86442CD4AC3F001FA255 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -265,10 +384,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SomeUIComponentsExample/SomeUIComponentsExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SomeUIComponentsExample/Preview Content\"";
-				DEVELOPMENT_TEAM = 63V9SX37YA;
+				DEVELOPMENT_TEAM = 6WLV67D2QG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -295,10 +415,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SomeUIComponentsExample/SomeUIComponentsExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SomeUIComponentsExample/Preview Content\"";
-				DEVELOPMENT_TEAM = 63V9SX37YA;
+				DEVELOPMENT_TEAM = 6WLV67D2QG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -323,6 +444,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		FB45E8872E7DB32800E39A1B /* Build configuration list for PBXNativeTarget "SomeUIComponentsExampleUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB45E8852E7DB32800E39A1B /* Debug */,
+				FB45E8862E7DB32800E39A1B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		FBED86332CD4AC3D001FA255 /* Build configuration list for PBXProject "SomeUIComponentsDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

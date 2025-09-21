@@ -10,7 +10,7 @@ import SomeUIComponents
 import Logging
 import OSLog
 
-let logger = Logger(label: "main")
+let logger = Logger(label: "SomeUIComponents - Demo App")
 
 public struct MyOSLogHandler: LogHandler {
     private let logger: os.Logger
@@ -34,6 +34,13 @@ public struct MyOSLogHandler: LogHandler {
                     file: String,
                     function: String,
                     line: UInt) {
+        print("!!!!!! \(message.description)")
+        if CommandLine.arguments.contains("uitest"), level == .info {
+            print("!!!!!! INSIDE")
+            var logs = UserDefaults(suiteName: "UITestsDefaults")?.stringArray(forKey: "logs") ?? []
+            logs.append(message.description)
+            UserDefaults(suiteName: "UITestsDefaults")?.setValue(logs, forKey: "logs")
+        }
         switch level {
         case .trace: logger.debug("\(message, privacy: .public)")
         case .debug: logger.debug("\(message, privacy: .public)")
@@ -47,8 +54,33 @@ public struct MyOSLogHandler: LogHandler {
 }
 
 struct ContentView: View {
+    @State private var router = AppRouter()
 
-    let trickHandler = SomeTrickHandler()
+    var body: some View {
+        NavigationStack(path: $router.path) {
+            List {
+                ForEach(AppDestination.destinations) { destination in
+                    NavigationCell(text: destination.text, accessibilityLabel: destination.accessibilityIdentifier) {
+                        logger.info("navigate to: \(destination.text)")
+                        router.path.append(destination.destination)
+                    }
+                }
+            }
+            .navigationTitle("UI Components")
+            .navigationDestination(for: AppDestination.self) { destination in
+                AppDestination.destinations.first(where: {
+                    $0.destination == destination
+                })?.content() ?? AnyView(EmptyView())
+            }
+        }.onAppear {
+            LoggingSystem.bootstrap { label in
+                MyOSLogHandler(subsystem: "com.SomeUICOmponentsDemo.someprojects", category: label)
+            }
+            logger.info("Content view presented")
+        }
+    }
+
+   /* let trickHandler = SomeTrickHandler()
     @State private var shapeStateInitial = true
     @State private var shapePath: Path = Path { path in
         path.addPath(TextPathExampler.path1)
@@ -117,7 +149,11 @@ struct ContentView: View {
                 MyOSLogHandler(subsystem: "com.SomeUICOmponentsDemo.someprojects", category: label)
             }
         }
-    }
+    } */
+}
+
+struct AccessibleIdentifierModifier {
+    
 }
 
 struct BlueButtonStyle: ButtonStyle {
@@ -135,6 +171,17 @@ struct BlueButtonStyle: ButtonStyle {
     }
 }
 
+extension UIApplication {
+    @objc class func hasLaunchArg(_ arg: String) -> Bool {
+      return ProcessInfo.processInfo.arguments.contains(arg)
+     }
+
+     @objc class func isRunningUITests() -> Bool {
+      return hasLaunchArg("uitest")
+     }
+}
+
 #Preview {
     ContentView()
 }
+

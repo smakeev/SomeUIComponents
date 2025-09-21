@@ -11,4 +11,4 @@ public func isFromSomeUIComponents(_ element: Any) -> Bool {
 }
 
 // MARK: - Public Configuration API
-internal  let logger: Logger = Logger(label: "com.UICOmponents.someprojects")
+internal  let logger: Logger = Logger(label: "com.UIComponents.someprojects")
